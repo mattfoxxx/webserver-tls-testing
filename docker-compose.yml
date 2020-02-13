@@ -1,0 +1,16 @@
+web:
+    image: nginx:1.17
+    volumes:
+     - ./nginx/default.conf:/etc/nginx/conf.d/mysite.template
+     - ./ssl:/etc/nginx/ssl
+     - ./html:/usr/share/nginx/html
+    ports:
+     - "8080:80"
+     - "8443:443"
+    environment:
+     - NGINX_HOST=localhost
+     - NGINX_SSL_CERT=/etc/nginx/ssl/certificate.crt
+     - NGINX_SSL_KEY=/etc/nginx/ssl/certificate.key
+     - NGINX_SSL_DH=/etc/nginx/ssl/dhparam4096.pem
+     - NGINX_SSL_CIPHERS=EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
